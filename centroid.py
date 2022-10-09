@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-VID_PATH = "shotdata.mp4"
+VID_PATH = "simple_sample.MOV"
 
 def show_image(img):
     cv2.namedWindow("img", cv2.WINDOW_NORMAL)
@@ -47,8 +47,8 @@ def color_match(img_path):
     img = np.invert(img)
     fimg = np.zeros_like(img)
     fimg[img >= 230] = 255
-    #show_image(fimg)
-    #show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
+    show_image(fimg)
+    show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
     plt.imsave("binarized.png", fimg)
     time1 = time.time()
     circles = crop_circles(fimg)
@@ -104,9 +104,10 @@ def write_frames():
     count = 0
     while success:
         # stuff
-        cv2.imwrite("frame{}.jpg".format(count), img)
+        cv2.imwrite("data/frame{}.jpg".format(count), img)
         success, img = vidcap.read()
         count += 1
 
 if __name__ == '__main__':
-    color_match("table_test2.jpg")
+    # color_match("table_test2.jpg")
+    color_match('data/frame0.jpg')
