@@ -24,7 +24,7 @@ def get_ball_size(img_path):
                                cv2.HOUGH_GRADIENT,
                                1.5,
                                20,
-                               param1=30,
+                               param1=100,
                                param2=5,
                                minRadius=50,
                                maxRadius=75)
