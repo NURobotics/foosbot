@@ -6,6 +6,8 @@ import time
 VID_PATH = "simple_sample.MOV"
 BALL_CROPPED = 'ball_color.jpg'
 
+DEBUGGING = False
+
 def show_image(img):           
     cv2.imshow("img", img)                             
     cv2.waitKey(0)   
@@ -54,16 +56,18 @@ def color_match(img_path):
     img = np.abs(np.subtract(img, ball_color_img))
     # np.subtract converts the type of the numbers from uint8 to float64
     img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)
-    # img = np.invert(img)
+    
+    # Getting rid of the noise
     fimg = np.zeros_like(img)
     fimg[img <= 25] = 255
-    show_image(fimg)
-    show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
-    plt.imsave("binarized.png", fimg)
+    if DEBUGGING:
+        show_image(fimg)
+        show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
+        plt.imsave("binarized.png", fimg)
     time1 = time.time()
     circles = crop_circles(fimg)
     time2 = time.time()
-    print(time2-time1)
+    # print(time2-time1)
 
     ball_size_px *=1.6
     ball_size_px = int(ball_size_px)
@@ -71,9 +75,10 @@ def color_match(img_path):
         img = cv2.imread(img_path, cv2.IMREAD_COLOR)
         cv2.circle(img,(i[0],i[1]),i[2],(255,87,51),3)
         cv2.circle(img,(i[0],i[1]),2,(255,87,51),4)
-        show_image(img)
+        return img
+        # show_image(img)
         #plt.imsave("center_of_mass.png", img)
-        return circles
+        # return circles
     else:
         return None
 
@@ -84,7 +89,7 @@ def find_center_of_circle(img):
                                20,
                                param1=30,
                                param2=5,
-                               minRadius=75,
+                               minRadius=0,
                                maxRadius=100)
     circles = np.uint16(np.around(circles))
     return circles
@@ -118,6 +123,21 @@ def write_frames():
         success, img = vidcap.read()
         count += 1
 
+def video_from_frames(frame_array):
+    height,width,layers=frame_array[1].shape
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    video=cv2.VideoWriter('video.mp4',fourcc,24,(width,height))
+    for frame in frame_array:
+        video.write(frame)
+    video.release()
+
+def frames_with_circles():
+    frames = []
+    for i in range(100):
+        frames.append(color_match(f"data/frame{i}.jpg"))
+    return frames
+
 if __name__ == '__main__':
     # color_match("table_test2.jpg")
-    color_match('data/frame0.jpg')
+    frames = frames_with_circles()
+    video_from_frames(frames)
