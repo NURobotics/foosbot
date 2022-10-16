@@ -26,7 +26,7 @@ def get_ball_size(img_path):
                                20,
                                param1=100,
                                param2=5,
-                               minRadius=50,
+                               minRadius=0,
                                maxRadius=75)
     circles = np.uint16(np.around(circles))
     for i in circles[0, :1]:
