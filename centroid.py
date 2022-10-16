@@ -4,15 +4,22 @@ import matplotlib.pyplot as plt
 import time
 
 VID_PATH = "simple_sample.MOV"
+BALL_CROPPED = 'ball_color.jpg'
 
-def show_image(img):
-    cv2.namedWindow("img", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("img", 700, 1000)              
+def show_image(img):           
     cv2.imshow("img", img)                             
     cv2.waitKey(0)   
 
-def get_ball_color():
-    img = cv2.imread('ball_color.jpg', cv2.IMREAD_COLOR)
+def get_ball_color(img_path):
+    """Get the average red, green, and blue.
+
+    Args:
+        img_path: string representing pre cropped image of the ball
+
+    Returns:
+        1d three element array with the average of each color of the image
+    """
+    img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     return np.mean(img, axis=(0, 1))
 
 def get_ball_size(img_path):
@@ -38,15 +45,18 @@ def get_ball_size(img_path):
     return circles[0,0][2]
 
 def color_match(img_path):
-    ball_color = get_ball_color()
+    ball_color = get_ball_color(BALL_CROPPED)
     ball_size_px = get_ball_size(img_path)
+
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-    img = np.abs(np.subtract(img, np.tile(ball_color, (img.shape[0], img.shape[1], 1))))
-    #print(img.shape)
+    # Subtracting the RGB is more precise than subtracting grayscale
+    ball_color_img = np.tile(ball_color, (img.shape[0], img.shape[1], 1))
+    img = np.abs(np.subtract(img, ball_color_img))
+    # np.subtract converts the type of the numbers from uint8 to float64
     img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)
-    img = np.invert(img)
+    # img = np.invert(img)
     fimg = np.zeros_like(img)
-    fimg[img >= 230] = 255
+    fimg[img <= 25] = 255
     show_image(fimg)
     show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
     plt.imsave("binarized.png", fimg)
