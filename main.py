@@ -15,10 +15,10 @@ def get_ball_color():
     return np.mean(img, axis=(0, 1))
 
 def get_ball_size():
-    img = cv2.imread('frame0.jpg', 0)
+    img = cv2.imread('data/frame0.jpg', 0)
     img = cv2.medianBlur(img,9)
     edges = cv2.Canny(img, 50, 100)
-    cimg = cv2.imread('frame0.jpg', cv2.IMREAD_COLOR)
+    cimg = cv2.imread('data/frame0.jpg', cv2.IMREAD_COLOR)
     circles = cv2.HoughCircles(edges,
                                cv2.HOUGH_GRADIENT,
                                1,
@@ -57,12 +57,12 @@ def color_match(img_path):
     ball_size_px *=1.6
     ball_size_px = int(ball_size_px)
     if center is not None:
-        #img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-        #print(center)
-        #cv2.circle(img, center, ball_size_px, (0, 255, 0), 2)
-        #show_image(img)
+        img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        print(center)
+        cv2.circle(img, center, ball_size_px, (0, 255, 0), 2)
+        show_image(img)
         print("time in total: {}".format(time.time() - start))
-        #plt.imsave("center_of_mass.png", img)
+        plt.imsave("center_of_mass.png", img)
         return center
     else:
         return None
@@ -123,11 +123,11 @@ def write_frames(vid_path):
     count = 0
     while success:
         # stuff
-        cv2.imwrite("frame{}.jpg".format(count), img)
+        cv2.imwrite("data/frame{}.jpg".format(count), img)
         success, img = vidcap.read()
         count += 1
 
-def track_posns(base_path="frame", count=500):
+def track_posns(base_path="data/frame", count=500):
     last_frame = None
     curr_frame = color_match(base_path + "{}.jpg".format(0))
     for i in range(1, count):
@@ -151,9 +151,9 @@ if __name__ == '__main__':
     ###track_posns()
     for i in range(0, 50, 10):
         print(i)
-        color_match('frame{}.jpg'.format(i))
+        color_match('data/frame{}.jpg'.format(i))
 
     """for i in range(4):
         color_match('table_test{}.jpg'.format(i))"""
 
-    color_match('table_test0.jpg')
+    color_match('data/frame0.jpg')
