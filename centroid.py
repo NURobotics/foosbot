@@ -39,7 +39,7 @@ def get_ball_size(img_path):
 
 def color_match(img_path):
     ball_color = get_ball_color()
-    ball_size_px = get_ball_size(img_path)
+    # ball_size_px = get_ball_size(img_path)
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     img = np.abs(np.subtract(img, np.tile(ball_color, (img.shape[0], img.shape[1], 1))))
     #print(img.shape)
@@ -47,16 +47,16 @@ def color_match(img_path):
     img = np.invert(img)
     fimg = np.zeros_like(img)
     fimg[img >= 230] = 255
-    show_image(fimg)
-    show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
-    plt.imsave("binarized.png", fimg)
+    # show_image(fimg)
+    # show_image(cv2.imread(img_path, cv2.IMREAD_COLOR))
+    # plt.imsave("binarized.png", fimg)
     time1 = time.time()
     circles = crop_circles(fimg)
     time2 = time.time()
     print(time2-time1)
 
-    ball_size_px *=1.6
-    ball_size_px = int(ball_size_px)
+    # ball_size_px *=1.6
+    # ball_size_px = int(ball_size_px)
     for i in circles[0, :1]:
         img = cv2.imread(img_path, cv2.IMREAD_COLOR)
         cv2.circle(img,(i[0],i[1]),i[2],(255,87,51),3)
@@ -67,6 +67,24 @@ def color_match(img_path):
     else:
         return None
 
+def color_match_frame(frame, ball_color_tile):
+    img = np.abs(np.subtract(frame, ball_color_tile))
+    img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)
+    img = np.invert(img)
+    fimg = np.zeros_like(img)
+    fimg[img >= 220] = 255
+    return fimg
+    circles = crop_circles(fimg)
+
+    if circles is None:
+        return frame
+    
+    for i in circles[0, :1]:
+        img = frame
+        cv2.circle(frame,(i[0],i[1]),i[2],(255,87,51),3)
+        cv2.circle(frame,(i[0],i[1]),2,(255,87,51),4)
+        return img
+
 def find_center_of_circle(img):
     circles = cv2.HoughCircles(img,
                                cv2.HOUGH_GRADIENT,
@@ -74,16 +92,11 @@ def find_center_of_circle(img):
                                20,
                                param1=30,
                                param2=5,
-                               minRadius=75,
+                               minRadius=0,
                                maxRadius=100)
-    circles = np.uint16(np.around(circles))
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
     return circles
-    for i in circles[0, :1]:
-        # draw the outer circle
-        cv2.circle(img,(i[0],i[1]),i[2],(250,150,150),2)
-        # draw the center of the circle
-        cv2.circle(img,(i[0],i[1]),2,(155,150,150),3)
-    cv2.waitKey(0)
 
 def crop_circles(img):  
     posns = np.where(img == 255)
@@ -91,7 +104,11 @@ def crop_circles(img):
         posnx = int(np.mean(posns[1]))
         posny = int(np.mean(posns[0]))
         img = img[posny - 100: posny + 100, posnx - 100:posnx+100]
+    if (np.sum(img) == 0):
+        return None
     circles = find_center_of_circle(img)
+    if circles is None:
+        return None
     for i in circles[0, :1]:
         i[0] = i[0] + posnx - 100
         i[1] = i[1] + posny - 100
