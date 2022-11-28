@@ -77,6 +77,13 @@ def ball_vel_from_consec_frames(frame_path: str, past_frame_path: str):
   delta_t = 1 / FPS
   return compute_velocity(center, past_center, delta_t)
 
+def vels_many_consec_frames(start: int=1, end: int=791):
+  vels = []
+  for i in range(start, end + 1):
+    vels.append(ball_vel_from_consec_frames(f"data/frame{i}.jpg", f"data/frame{i-1}.jpg"))
+  return vels
 
 if __name__ == "__main__":
-  draw_circles("data/frame404.jpg")
+  vels = vels_many_consec_frames(1, 10)
+  for vel in vels:
+    print(vel)
