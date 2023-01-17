@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "arduino_code/Foosbot"
+		},
+		{
+			"path": "python_code"
+		}
+	],
+	"settings": {}
+}
