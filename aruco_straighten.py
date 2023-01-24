@@ -50,7 +50,9 @@ def main():
     # (topLeft, topRight, bottomRight, bottomLeft) = reorder(corners[0])
     print("corners:", corners[0])
 
-    dst = np.asarray([[0,0], [4,0], [4,4], [0, 4]])
+    image_size = 4
+
+    dst = np.asarray([[0,0], [image_size,0], [image_size, image_size], [0, image_size]])
 
     dst *= 100
 
