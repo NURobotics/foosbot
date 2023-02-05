@@ -6,6 +6,8 @@ FPS = 30
 TEST_IMG = "data/frame0.jpg"
 VID_PATH = "test_with_aruca/test_with_aruca.mov"
 ball_color_rgb = None
+_past_frame_path = None
+_past_frame_center = None
 _frame_circle = {}
 
 class velocity_px:
@@ -85,11 +87,11 @@ def find_circle(img: np.ndarray, img_path: str):
 
 def draw_circles(img_path: str):
   img = cv.imread(img_path, cv.IMREAD_COLOR)
-  circle = find_circle(color_match(img_path))
+  circle = find_circle(color_match(img_path), img_path)
   if circle is None:
     print("could not draw circles because there is no circle")
     return
-  show_img(cv.circle(img, (circle[0], circle[1]), circle[2], (255,87,51)))
+  show_img(cv.circle(img, (int(circle[0]), int(circle[1])), int(circle[2]), (20,255,57)))
 
 def compute_velocity(curr_center_pos, past_center_pos, delta_t: float) -> velocity_px:
   vx = (curr_center_pos.x - past_center_pos.x)/delta_t
@@ -98,17 +100,24 @@ def compute_velocity(curr_center_pos, past_center_pos, delta_t: float) -> veloci
   return vel
 
 def ball_vel_from_consec_frames(frame_path: str, past_frame_path: str):
-  center = find_circle(color_match(frame_path))
+  global _past_frame_path
+  global _past_frame_center
+  if past_frame_path == _past_frame_path:
+    past_center = _past_frame_center
+  else:
+    past_center = find_circle(color_match(past_frame_path), past_frame_path)
+    if past_center is None:
+      return velocity_px(0, 0)
+    past_center = center_pos(past_center[0], past_center[1])
+  center = find_circle(color_match(frame_path), frame_path)
   if center is None:
-    return None
+    return velocity_px(0, 0)
   center = center_pos(center[0], center[1])
-
-  past_center = find_circle(color_match(past_frame_path))
-  if past_center is None:
-    return None
-  past_center = center_pos(past_center[0], past_center[1])
+  _past_frame_path = frame_path
+  _past_frame_center = center
   
   delta_t = 1 / FPS
+  print("found vel")
   return compute_velocity(center, past_center, delta_t)
 
 def vels_many_consec_frames(start: int=1, end: int=791):
