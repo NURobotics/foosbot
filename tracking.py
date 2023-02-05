@@ -135,6 +135,24 @@ def vels_many_consec_frames(folder, start: int=1, end, format="list"):
   else:
     raise ValueError('{format} wrong, use "list" or "dict"'.format(format=repr(format)))
 
+def frames_with_vel_arrow(folder, vels_dict, start: int=0, end: int=791):
+    frames = []
+    for i in range(start, end + 1):
+      print(i)
+      img = cv.imread(f"{folder}/frame{i}.jpg", cv.IMREAD_COLOR)
+      if vels_dict.get(i) and (vels_dict[i].x != 0 and vels_dict[i].y != 0):
+        center = find_circle(color_match(f"{folder}/frame{i}.jpg"), f"{folder}/frame{i}.jpg")
+        if center is None:
+          frames.append(img)
+          continue
+        center = (int(center[0]), int(center[1]))
+        arrow_tip = (center[0] + int(vels_dict[i].x/2), center[1] + int(vels_dict[i].y/2))
+        img_arrow = cv.arrowedLine(img, center, arrow_tip, (0, 255, 0), 5)
+        frames.append(img_arrow)
+        continue
+      frames.append(img)
+    return frames
+
 if __name__ == "__main__":
   vels = vels_many_consec_frames(1, 10)
   for vel in vels:
