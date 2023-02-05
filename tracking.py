@@ -6,6 +6,7 @@ FPS = 30
 TEST_IMG = "data/frame0.jpg"
 VID_PATH = "test_with_aruca/test_with_aruca.mov"
 ball_color_rgb = None
+_frame_circle = {}
 
 class velocity_px:
   def __init__(self, v_x: float, v_y: float):
@@ -67,13 +68,20 @@ def crop_circles(img):
   else:
     return img, 0, 0
 
-def find_circle(img: np.ndarray):
+def find_circle(img: np.ndarray, img_path: str):
+  if len(_frame_circle.get(img_path, [])):
+    return _frame_circle[img_path]
+  img, x_offset, y_offset = crop_circles(img)
   # HoughCircles can only receive grayscale images
   circles_found = cv.HoughCircles(img, cv.HOUGH_GRADIENT, 2, 20, param1=30, param2=5, minRadius=5, maxRadius=150)
   if circles_found is None:
     return None
   # find_circle is returning numbers as np.float32
-  return circles_found[0, 0]
+  main_circle = circles_found[0, 0]
+  main_circle[0] += x_offset
+  main_circle[1] += y_offset
+  _frame_circle[img_path] = main_circle
+  return main_circle
 
 def draw_circles(img_path: str):
   img = cv.imread(img_path, cv.IMREAD_COLOR)
