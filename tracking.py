@@ -135,6 +135,20 @@ def vels_many_consec_frames(folder, end, start: int=1, format="list"):
   else:
     raise ValueError('{format} wrong, use "list" or "dict"'.format(format=repr(format)))
 
+def smooth_average(vels_dict):
+  vels_list = list(vels_dict.values())
+  vels_x = [0.1*sum([vel.x for vel in vels_list[i-9:i+1]]) for i in range(9, len(vels_list))]
+  vels_y = [0.1*sum([vel.y for vel in vels_list[i-9:i+1]]) for i in range(9, len(vels_list))]
+  counter = 1
+  l = list(vels_dict.keys())
+  for i in l:
+    if counter < 10:
+      vels_dict.pop(i)
+      counter += 1
+    else:
+      vels[i] = velocity_px(vels_x.pop(0), vels_y.pop(0))
+  return vels_dict
+
 def frames_with_vel_arrow(folder, vels_dict, end, start: int=0):
     frames = []
     for i in range(start, end + 1):
