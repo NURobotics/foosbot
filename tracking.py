@@ -55,6 +55,18 @@ def color_match(img_path: str):
   black_white_img[img > 235] = 255
   return black_white_img
 
+def crop_circles(img):  
+  posns = np.where(img == 255)
+  if len(posns[0]) != 0:
+      posnx = int(np.mean(posns[1]))
+      posny = int(np.mean(posns[0]))
+      half_window_size = 150
+      half_window_size_x = min(posnx, half_window_size)
+      half_window_size_y = min(posny, half_window_size)
+      return img[posny - half_window_size_y: posny + half_window_size_y, posnx - half_window_size_x:posnx+half_window_size_x], posnx - half_window_size_x, posny - half_window_size_y
+  else:
+    return img, 0, 0
+
 def find_circle(img: np.ndarray):
   # HoughCircles can only receive grayscale images
   circles_found = cv.HoughCircles(img, cv.HOUGH_GRADIENT, 2, 20, param1=30, param2=5, minRadius=5, maxRadius=150)
