@@ -5,6 +5,7 @@ BALL_COLOR_IMG = "test/ball_color.jpg"
 FPS = 30
 TEST_IMG = "data/frame0.jpg"
 VID_PATH = "test_with_aruca/test_with_aruca.mov"
+ball_color_rgb = None
 
 class velocity_px:
   def __init__(self, v_x: float, v_y: float):
@@ -42,15 +43,16 @@ def get_ball_color() -> list[np.ndarray]:
 
 def color_match(img_path: str):
   img = cv.imread(img_path, cv.IMREAD_COLOR)
-  ball_color_rgb = get_ball_color()
+  global ball_color_rgb
+  if ball_color_rgb is None:
+    ball_color_rgb = get_ball_color()
+    print(ball_color_rgb)
   img_with_ball_color = np.tile(ball_color_rgb, (img.shape[0], img.shape[1], 1))
   img = np.abs(np.subtract(img, img_with_ball_color))
-  # Maybe we need to convert to gray because the img is in bgr and the 
-  # show_img read rgb, and gray is the same for both idk
   img = cv.cvtColor(img.astype("uint8"), cv.COLOR_BGR2GRAY)
-  img = np.invert(img)
   black_white_img = np.zeros_like(img)
-  black_white_img[img > 230] = 255
+  black_white_img[img < 20] = 255
+  black_white_img[img > 235] = 255
   return black_white_img
 
 def find_circle(img: np.ndarray):
