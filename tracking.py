@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-BALL_COLOR = "ball_color.jpg"
+BALL_COLOR_IMG = "test/ball_color.jpg"
 FPS = 30
 TEST_IMG = "data/frame0.jpg"
 VID_PATH = "test_with_aruca/test_with_aruca.mov"
@@ -37,7 +37,7 @@ def write_frames(folder: str):
     count += 1
 
 def get_ball_color() -> list[np.ndarray]:
-  img = cv.imread(BALL_COLOR, cv.IMREAD_COLOR)
+  img = cv.imread(BALL_COLOR_IMG, cv.IMREAD_COLOR)
   return np.mean(img, axis=(0, 1))
 
 def color_match(img_path: str):
