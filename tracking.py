@@ -172,12 +172,30 @@ def frames_with_vel_arrow(folder, vels_dict, end, start: int=0):
 def video_from_frames(frame_array):
     height,width,layers=frame_array[1].shape
     fourcc = cv.VideoWriter_fourcc(*'MP4V')
-    video=cv.VideoWriter('test_with_aruca/vels10avg30fpsopt.mp4',fourcc,30,(width,height))
+    video=cv.VideoWriter('vels10avg30fpsopt1.mp4',fourcc,30,(width,height))
     for frame in frame_array:
       video.write(frame)
     video.release()
 
 if __name__ == "__main__":
-  vels = vels_many_consec_frames(1, 10)
-  for vel in vels:
-    print(vel)
+  start_get_vels = time.time()
+  vels = vels_many_consec_frames("test_with_aruca", end=901, format="dict")
+  print("got all vels")
+  end_get_vels = time.time()
+  start_smooths = time.time()
+  vels = smooth_average(vels)
+  end_smooths = time.time()
+  start_vid = time.time()
+  video_from_frames(frames_with_vel_arrow(folder="test_with_aruca", vels_dict=vels, end=901))
+  end_vid = time.time()
+  print(f"Time to get the velocity of all frames: {end_get_vels-start_get_vels}s; per frame: \
+  {(end_get_vels-start_get_vels)*1000/900}ms")
+  print(f"Time to smooth all velocities: {end_smooths-start_smooths}s; per frame: \
+    {(end_smooths-start_smooths)*1000/900}ms")
+  print(f"Time to draw the arrows and assemble the frames into a video: {end_vid-start_vid}s; \
+    per frame: {(end_vid-start_vid)*1000/900}ms")
+  # draw_circles("test/background-black.jpg")
+  # draw_circles("test/background-gray.jpg")
+  # draw_circles("test/background-metallic.jpg")
+  # draw_circles("data/frame0.jpg")
+  # draw_circles("stable_video/frame100.jpg")
