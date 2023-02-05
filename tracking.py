@@ -9,6 +9,7 @@ class velocity_px:
   def __init__(self, v_x: float, v_y: float):
     self.x = v_x
     self.y = v_y
+    self.v = sqrt(v_x*v_x + v_y*v_y)
 
   def __str__(self):
     return f"vx: {self.x}, vy: {self.y}"
