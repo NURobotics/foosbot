@@ -120,7 +120,7 @@ def ball_vel_from_consec_frames(frame_path: str, past_frame_path: str):
   print("found vel")
   return compute_velocity(center, past_center, delta_t)
 
-def vels_many_consec_frames(folder, start: int=1, end, format="list"):
+def vels_many_consec_frames(folder, end, start: int=1, format="list"):
   if format == "list":
     vels = []
     for i in range(start, end + 1):
