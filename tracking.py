@@ -135,7 +135,7 @@ def vels_many_consec_frames(folder, start: int=1, end, format="list"):
   else:
     raise ValueError('{format} wrong, use "list" or "dict"'.format(format=repr(format)))
 
-def frames_with_vel_arrow(folder, vels_dict, start: int=0, end: int=791):
+def frames_with_vel_arrow(folder, vels_dict, end, start: int=0):
     frames = []
     for i in range(start, end + 1):
       print(i)
