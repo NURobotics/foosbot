@@ -153,6 +153,14 @@ def frames_with_vel_arrow(folder, vels_dict, start: int=0, end: int=791):
       frames.append(img)
     return frames
 
+def video_from_frames(frame_array):
+    height,width,layers=frame_array[1].shape
+    fourcc = cv.VideoWriter_fourcc(*'MP4V')
+    video=cv.VideoWriter('test_with_aruca/vels10avg30fpsopt.mp4',fourcc,30,(width,height))
+    for frame in frame_array:
+      video.write(frame)
+    video.release()
+
 if __name__ == "__main__":
   vels = vels_many_consec_frames(1, 10)
   for vel in vels:
