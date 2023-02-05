@@ -4,6 +4,7 @@ import numpy as np
 BALL_COLOR = "ball_color.jpg"
 FPS = 30
 TEST_IMG = "data/frame0.jpg"
+VID_PATH = "test_with_aruca/test_with_aruca.mov"
 
 class velocity_px:
   def __init__(self, v_x: float, v_y: float):
@@ -24,6 +25,16 @@ class center_pos:
 def show_img(img_path):
   cv.imshow("img", img_path)
   cv.waitKey()
+
+def write_frames(folder: str):
+  vidcap = cv.VideoCapture(VID_PATH)
+  success, img = vidcap.read()
+  count = 0
+  while success:
+    print(count)
+    cv.imwrite("{}/frame{}.jpg".format(folder, count), img)
+    success, img = vidcap.read()
+    count += 1
 
 def get_ball_color() -> list[np.ndarray]:
   img = cv.imread(BALL_COLOR, cv.IMREAD_COLOR)
