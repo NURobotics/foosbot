@@ -1,3 +1,7 @@
+data/*
+foosbot_env
+tracking2.py
+stable_video/
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python,visualstudiocode,c++,platformio
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python,visualstudiocode,c++,platformio
 

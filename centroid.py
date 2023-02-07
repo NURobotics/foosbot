@@ -95,6 +95,11 @@ def crop_circles(img):
     for i in circles[0, :1]:
         i[0] = i[0] + posnx - 100
         i[1] = i[1] + posny - 100
+
+    best_circle = circles[0, 0]
+    # best_circle is of form [x, y, radius]
+    best_circle[0] += posnx - 100
+    
     return circles
 
 
