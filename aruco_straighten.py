@@ -10,18 +10,6 @@ def resize_img(img, scale_percent=50):
     dim = (width, height)
     return cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
-def reorder(points):
-    new_points = np.zeros_like(points)
-    points = points.reshape((4, 2))
-    add = points.sum(1)
-
-    new_points[0] = points[np.argmin(add)]
-    new_points[3] = points[np.argmax(add)]
-    diff = np.diff(points, axis=1)
-    new_points[1] = points[np.argmin(diff)]
-    new_points[2] = points[np.argmax(diff)]
-    return new_points
-
 def get_roi_topleft(img):
     roi = cv2.selectROI("Select ball", img)
     # [Top_Left_X, Top_Left_Y, Width, Height]
@@ -33,7 +21,8 @@ def main():
     arucoParams = cv2.aruco.DetectorParameters_create()
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_50)
 
-    img = cv2.imread("basic_aruco.jpg")
+    img = cv2.imread("ruler_rotated.jpg")
+    # img = cv2.imread("basic_aruco.jpg")
     img = resize_img(img, scale_percent=20)
 
     # detect ArUco markers in the input frame
@@ -50,7 +39,7 @@ def main():
     # (topLeft, topRight, bottomRight, bottomLeft) = reorder(corners[0])
     print("corners:", corners[0])
 
-    image_size = 4
+    image_size = 3.8
 
     dst = np.asarray([[0,0], [image_size,0], [image_size, image_size], [0, image_size]])
 
@@ -79,7 +68,7 @@ def main():
 
     # Draw a 1 inch box
 
-    top_left = (0, 430)
+    top_left = (0, 400)
     bottom_right = (top_left[0] + 100, top_left[1] + 100)
 
 
