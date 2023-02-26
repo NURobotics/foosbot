@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import warnings
 import cv2
 import numpy as np
+from copy import deepcopy
 
 @dataclass
 class InchCoordinate:
@@ -90,7 +91,7 @@ class ArucoTransformer:
             warnings.warn("Warning in convert_image: transformation matrix not set")
             return None
 
-        dimensions = (1100, 1500)
+        dimensions = (1000, 1000)
 
         # cv2.imshow("image", image)
         # cv2.waitKey(0)
@@ -153,7 +154,7 @@ if __name__ == "__main__":
 
     transformer = ArucoTransformer()
 
-    transformer.set_transformation_matrix(image.copy())
+    transformer.set_transformation_matrix(image)
 
     transformed_image = transformer.convert_image(image, include_grid=True)
 
